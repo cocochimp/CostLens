@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "c67f4a2e-d60f-4091-90d4-2c5b1322ea24",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "/Users/lovin/Desktop/AgentTest/xxx01/.archify/waterfall-costsplit-20261120-171619/candidate.json",
+  "output": "/Users/lovin/Desktop/AgentTest/xxx01/diagrams/02-成本构成拆解.html",
+  "specification": {
+    "sha256": "5e2a5cc125f893588946f9d08c8ca04c47ad0d7b1b3e4cf87bc9d0cb9bf2c5c4",
+    "bytes": 7209
+  },
+  "artifact": {
+    "sha256": "ba01bd641f3a9f26c17a18b4567c9ae0afe8d22780253882ad6fbae18dfadb33",
+    "bytes": 851653
+  }
+}

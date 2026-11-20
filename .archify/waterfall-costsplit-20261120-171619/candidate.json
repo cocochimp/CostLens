@@ -1,0 +1,311 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "跨境订单成本瀑布：$25.00 售价逐级扣减到 $5.50 净利",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "output": "diagrams/02-成本构成拆解.html",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": {
+          "label": "订单收入"
+        },
+        "backend": {
+          "label": "商品与物流成本"
+        },
+        "security": {
+          "label": "平台与支付费用"
+        },
+        "cloud": {
+          "label": "运营费用"
+        },
+        "database": {
+          "label": "净利"
+        },
+        "external": {
+          "label": "关键计费口径"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "order",
+      "label": "Amazon 美国站服装订单 · 单笔成本逐级扣减（USD）"
+    }
+  ],
+  "groups": [
+    {
+      "id": "cascade",
+      "label": "逐级扣减链路",
+      "lane": "order",
+      "fromCol": 1,
+      "toCol": 1
+    }
+  ],
+  "nodes": [
+    {
+      "id": "sale",
+      "lane": "order",
+      "col": 1,
+      "type": "frontend",
+      "label": "售价 +$25.00",
+      "sublabel": "Amazon 美国站成交价",
+      "width": 200,
+      "yOffset": -396
+    },
+    {
+      "id": "purchase",
+      "lane": "order",
+      "col": 1,
+      "type": "backend",
+      "label": "采购成本 −$6.00",
+      "sublabel": "1688 采购 · 余 $19.00",
+      "width": 200,
+      "yOffset": -308
+    },
+    {
+      "id": "firstleg",
+      "lane": "order",
+      "col": 1,
+      "type": "backend",
+      "label": "头程运费 −$1.20",
+      "sublabel": "云途空运小包 · 余 $17.80",
+      "width": 200,
+      "yOffset": -220
+    },
+    {
+      "id": "lastleg",
+      "lane": "order",
+      "col": 1,
+      "type": "backend",
+      "label": "尾程运费 −$4.50",
+      "sublabel": "UPS Ground · 计费重 1.5kg · 余 $13.30",
+      "width": 200,
+      "yOffset": -132
+    },
+    {
+      "id": "commission",
+      "lane": "order",
+      "col": 1,
+      "type": "security",
+      "label": "平台佣金 −$3.75",
+      "sublabel": "服装类目名义 17% · 余 $9.55",
+      "width": 200,
+      "yOffset": -44
+    },
+    {
+      "id": "commission_min",
+      "lane": "order",
+      "col": 1,
+      "type": "security",
+      "label": "佣金最低收费补足 −$0.15",
+      "sublabel": "计提不足最低收费 · 余 $9.40",
+      "width": 200,
+      "yOffset": 44
+    },
+    {
+      "id": "payment",
+      "lane": "order",
+      "col": 1,
+      "type": "security",
+      "label": "支付手续费 −$1.10",
+      "sublabel": "比例费 + 固定费 · 余 $8.30",
+      "width": 200,
+      "yOffset": 132
+    },
+    {
+      "id": "storage",
+      "lane": "order",
+      "col": 1,
+      "type": "cloud",
+      "label": "仓储费 −$0.30",
+      "sublabel": "月度按体积分摊 · 余 $8.00",
+      "width": 200,
+      "yOffset": 220
+    },
+    {
+      "id": "ads",
+      "lane": "order",
+      "col": 1,
+      "type": "cloud",
+      "label": "广告费 −$2.50",
+      "sublabel": "该单 CPC 分摊 · 余 $5.50",
+      "width": 200,
+      "yOffset": 308
+    },
+    {
+      "id": "net",
+      "lane": "order",
+      "col": 1,
+      "type": "database",
+      "label": "净利 $5.50",
+      "sublabel": "净利率 22.0%",
+      "width": 200,
+      "yOffset": 396
+    },
+    {
+      "id": "note_volume",
+      "lane": "order",
+      "col": 5,
+      "type": "external",
+      "label": "体积重生效",
+      "sublabel": "计费重取实重与体积重较大者",
+      "width": 230,
+      "yOffset": -132
+    },
+    {
+      "id": "note_floor",
+      "lane": "order",
+      "col": 5,
+      "type": "external",
+      "label": "最低收费补足",
+      "sublabel": "最低收费使用户实际费率高于名义费率",
+      "width": 230,
+      "yOffset": 44
+    },
+    {
+      "id": "note_check",
+      "lane": "order",
+      "col": 5,
+      "type": "external",
+      "label": "扣减合计 $19.50",
+      "sublabel": "8 级费用占售价 78.0%",
+      "width": 230,
+      "yOffset": 396
+    }
+  ],
+  "edges": [
+    {
+      "id": "sale-purchase",
+      "from": "sale",
+      "to": "purchase",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "purchase-firstleg",
+      "from": "purchase",
+      "to": "firstleg",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "firstleg-lastleg",
+      "from": "firstleg",
+      "to": "lastleg",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "lastleg-commission",
+      "from": "lastleg",
+      "to": "commission",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "commission-floor",
+      "from": "commission",
+      "to": "commission_min",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "floor-payment",
+      "from": "commission_min",
+      "to": "payment",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "payment-storage",
+      "from": "payment",
+      "to": "storage",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "storage-ads",
+      "from": "storage",
+      "to": "ads",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "ads-net",
+      "from": "ads",
+      "to": "net",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "variant": "emphasis"
+    },
+    {
+      "id": "lastleg-note",
+      "from": "lastleg",
+      "to": "note_volume",
+      "label": "计费口径",
+      "variant": "dashed",
+      "role": "branch",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "floor-note",
+      "from": "commission_min",
+      "to": "note_floor",
+      "label": "计提口径",
+      "variant": "dashed",
+      "role": "branch",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "net-note",
+      "from": "net",
+      "to": "note_check",
+      "label": "校验",
+      "variant": "dashed",
+      "role": "branch",
+      "fromSide": "right",
+      "toSide": "left"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "逐级校验",
+      "items": [
+        "25.00 − 6.00 − 1.20 − 4.50 − 3.75 − 0.15 − 1.10 − 0.30 − 2.50 = 5.50",
+        "8 级扣减合计 19.50，占售价 78.0%；净利 5.50，净利率 22.0%"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "最低收费的连锁效应",
+      "items": [
+        "平台佣金与最低收费补足必须成对入账，缺一项则费率失真",
+        "最低收费使用户实际费率高于名义费率，低价单尤其明显"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "CostLens 的拆解口径",
+      "items": [
+        "每级费用对应一张独立单据：采购单、头程面单、尾程账单、平台结算、收款账单、仓储月报、广告后台",
+        "余额逐级递减，任一阶段可回溯源单据与规则版本"
+      ]
+    }
+  ]
+}

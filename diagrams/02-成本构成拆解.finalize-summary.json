@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "/Users/lovin/Desktop/AgentTest/xxx01/.archify/waterfall-costsplit-20261120-171619/candidate.json",
+    "sha256": "a518a2994f4537fe11e540eb9e5e5ad09eaad21770095f1ffdb77178aa70ab87",
+    "bytes": 5972
+  },
+  "artifact": {
+    "path": "/Users/lovin/Desktop/AgentTest/xxx01/diagrams/02-成本构成拆解.html",
+    "sha256": "08d9e81bb59a7c3e41b71ce653ba9603ff396b07b41ce835ef207e359f7af059",
+    "bytes": 852218
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/Users/lovin/Desktop/AgentTest/xxx01/diagrams/02-成本构成拆解.finalize.json",
+    "summaryReceipt": "/Users/lovin/Desktop/AgentTest/xxx01/diagrams/02-成本构成拆解.finalize-summary.json",
+    "browserCheckReceipt": "/Users/lovin/Desktop/AgentTest/xxx01/diagrams/02-成本构成拆解.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-11-20T09:10:28.692Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 2471,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

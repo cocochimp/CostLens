@@ -1,0 +1,41 @@
+# ===== 构建产物 =====
+target/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# ===== IDE =====
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+
+# ===== macOS =====
+.DS_Store
+
+# ===== Archify 图生成中间产物（保留 candidate.json 作为图源） =====
+.archify/**/visual-check*/
+.archify/**/review-*/
+.archify/**/*.png
+.archify/**/*.finalize.json
+.archify/**/*.finalize-summary.json
+.archify/**/*.browser-check.json
+.archify/**/*.delivery.json
+
+# 保留：diagrams/*.html 与 diagrams/*.json（交付物与门禁回执）
+
+# ===== 本地环境 =====
+*.log
+logs/
+application-local.yml
+.env
+.env.local
+
+# ===== 临时文件 =====
+*.tmp
+*.bak
+*~

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "ee37cc57-7dbf-4bcf-be05-0fecc242ee9a",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "/Users/lovin/Desktop/AgentTest/xxx01/.archify/workflow-bitemporal-20261120-171552/candidate.json",
+  "output": "/Users/lovin/Desktop/AgentTest/xxx01/diagrams/03-双时态版本.html",
+  "specification": {
+    "sha256": "cd54938d8d2a53627114a08228a709771ce1800134b2dae2ec8fe577071bf48c",
+    "bytes": 5963
+  },
+  "artifact": {
+    "sha256": "e09729614d471c3927a322f8f9b23a099abd76cb8a17535362cb774c9b112489",
+    "bytes": 853778
+  }
+}

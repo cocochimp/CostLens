@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "b400f704-467e-4698-a526-f1ac5ab7f840",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/Users/lovin/Desktop/AgentTest/xxx01/.archify/architecture-costlens-20261120-172147/candidate.json",
+  "output": "/Users/lovin/Desktop/AgentTest/xxx01/diagrams/01-系统架构.html",
+  "specification": {
+    "sha256": "3e2a8b449822295db11309cc3aa5f6efbbf9786a754ef788fa90385110ba3e11",
+    "bytes": 13635
+  },
+  "artifact": {
+    "sha256": "b2b005fd2466951006e4ff4792f9c05177e9bde31ce2951025070093f003c61d",
+    "bytes": 897274
+  }
+}

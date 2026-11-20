@@ -1,0 +1,723 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "CostLens 系统架构 · 跨境电商全成本核算与定价决策",
+    "output": "diagrams/01-系统架构.html",
+    "locale": "zh-CN",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "bill-file",
+      "type": "external",
+      "label": "平台账单文件",
+      "sublabel": "Amazon · Shopee · Temu",
+      "pos": [
+        40,
+        40
+      ],
+      "size": [
+        190,
+        64
+      ]
+    },
+    {
+      "id": "rate-source",
+      "type": "external",
+      "label": "费率来源",
+      "sublabel": "UPS · ヤマト · Shopee SLS",
+      "pos": [
+        40,
+        1080
+      ],
+      "size": [
+        190,
+        56
+      ]
+    },
+    {
+      "id": "mq-consumer",
+      "type": "backend",
+      "label": "MQ 消费者",
+      "sublabel": "订阅账单导入（RabbitMQ）",
+      "pos": [
+        40,
+        200
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "acl",
+      "type": "backend",
+      "label": "账单格式适配",
+      "sublabel": "防腐层 · Amazon/Shopee/Temu",
+      "pos": [
+        293,
+        200
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "rest",
+      "type": "backend",
+      "label": "REST Controller",
+      "sublabel": "9 个端点 · HTTP / JSON",
+      "pos": [
+        540,
+        200
+      ],
+      "size": [
+        480,
+        76
+      ]
+    },
+    {
+      "id": "sc-fee",
+      "type": "backend",
+      "label": "费用计提场景",
+      "sublabel": "账单驱动计提",
+      "pos": [
+        72,
+        380
+      ],
+      "size": [
+        144,
+        64
+      ]
+    },
+    {
+      "id": "sc-freight",
+      "type": "backend",
+      "label": "运费试算场景",
+      "sublabel": "试算并落费用",
+      "pos": [
+        364,
+        380
+      ],
+      "size": [
+        144,
+        64
+      ]
+    },
+    {
+      "id": "sc-cost",
+      "type": "backend",
+      "label": "成本单生成场景",
+      "sublabel": "按订单归集",
+      "pos": [
+        664,
+        380
+      ],
+      "size": [
+        144,
+        64
+      ]
+    },
+    {
+      "id": "sc-recalc",
+      "type": "backend",
+      "label": "重算批次场景",
+      "sublabel": "批次分片重算",
+      "pos": [
+        818,
+        380
+      ],
+      "size": [
+        144,
+        64
+      ]
+    },
+    {
+      "id": "sc-pricing",
+      "type": "backend",
+      "label": "定价求解场景",
+      "sublabel": "反解目标售价",
+      "pos": [
+        982,
+        380
+      ],
+      "size": [
+        144,
+        64
+      ]
+    },
+    {
+      "id": "fee-svc",
+      "type": "backend",
+      "label": "费用计提服务",
+      "sublabel": "规则 + 计算模式",
+      "pos": [
+        80,
+        580
+      ],
+      "size": [
+        128,
+        96
+      ]
+    },
+    {
+      "id": "fee-r1",
+      "type": "backend",
+      "label": "比例",
+      "sublabel": "按金额比例",
+      "pos": [
+        240,
+        580
+      ],
+      "size": [
+        76,
+        46
+      ]
+    },
+    {
+      "id": "fee-r2",
+      "type": "backend",
+      "label": "比例+最低",
+      "sublabel": "下限兜底",
+      "pos": [
+        240,
+        636
+      ],
+      "size": [
+        76,
+        46
+      ]
+    },
+    {
+      "id": "fee-r3",
+      "type": "backend",
+      "label": "金额阶梯",
+      "sublabel": "分段费率",
+      "pos": [
+        240,
+        692
+      ],
+      "size": [
+        76,
+        46
+      ]
+    },
+    {
+      "id": "fee-r4",
+      "type": "backend",
+      "label": "按件按体积",
+      "sublabel": "件数×体积",
+      "pos": [
+        240,
+        748
+      ],
+      "size": [
+        76,
+        46
+      ]
+    },
+    {
+      "id": "freight-svc",
+      "type": "backend",
+      "label": "运费计费服务",
+      "sublabel": "按目的地选策略",
+      "pos": [
+        372,
+        580
+      ],
+      "size": [
+        128,
+        84
+      ]
+    },
+    {
+      "id": "sf-us",
+      "type": "backend",
+      "label": "美国·体积重",
+      "sublabel": "DimWeightZone",
+      "pos": [
+        532,
+        580
+      ],
+      "size": [
+        96,
+        54
+      ]
+    },
+    {
+      "id": "sf-jp",
+      "type": "backend",
+      "label": "日本·围长档",
+      "sublabel": "GirthSizeBand",
+      "pos": [
+        532,
+        646
+      ],
+      "size": [
+        96,
+        54
+      ]
+    },
+    {
+      "id": "sf-sea",
+      "type": "backend",
+      "label": "东南亚·首重",
+      "sublabel": "FirstAddWeight",
+      "pos": [
+        532,
+        712
+      ],
+      "size": [
+        96,
+        54
+      ]
+    },
+    {
+      "id": "cost-sheet",
+      "type": "backend",
+      "label": "成本单聚合",
+      "sublabel": "订单全成本",
+      "pos": [
+        684,
+        580
+      ],
+      "size": [
+        104,
+        56
+      ]
+    },
+    {
+      "id": "cost-recalc",
+      "type": "backend",
+      "label": "重算批次聚合",
+      "sublabel": "批次分片重算",
+      "pos": [
+        840,
+        580
+      ],
+      "size": [
+        104,
+        56
+      ]
+    },
+    {
+      "id": "pricing-solver",
+      "type": "backend",
+      "label": "定价求解器",
+      "sublabel": "分段方程求解",
+      "pos": [
+        1000,
+        580
+      ],
+      "size": [
+        108,
+        56
+      ]
+    },
+    {
+      "id": "rule-temporal",
+      "type": "backend",
+      "label": "双时态解析",
+      "sublabel": "BitTemporalResolver",
+      "pos": [
+        330,
+        960
+      ],
+      "size": [
+        168,
+        56
+      ]
+    },
+    {
+      "id": "rule-version",
+      "type": "backend",
+      "label": "规则版本聚合",
+      "sublabel": "FeeRule / FreightRateCard",
+      "pos": [
+        330,
+        1080
+      ],
+      "size": [
+        168,
+        56
+      ]
+    },
+    {
+      "id": "repo",
+      "type": "database",
+      "label": "MyBatis-Plus 仓储",
+      "sublabel": "实现 domain 仓储接口",
+      "pos": [
+        60,
+        1260
+      ],
+      "size": [
+        170,
+        72
+      ]
+    },
+    {
+      "id": "mysql",
+      "type": "database",
+      "label": "MySQL 8",
+      "sublabel": "规则版本 / 成本单 / 明细",
+      "pos": [
+        280,
+        1260
+      ],
+      "size": [
+        170,
+        72
+      ]
+    },
+    {
+      "id": "redis",
+      "type": "database",
+      "label": "Redis",
+      "sublabel": "规则快照 / 重算幂等锁",
+      "pos": [
+        480,
+        1260
+      ],
+      "size": [
+        170,
+        72
+      ]
+    },
+    {
+      "id": "mqueue",
+      "type": "messagebus",
+      "label": "RabbitMQ",
+      "sublabel": "账单导入 / 规则变更事件",
+      "pos": [
+        680,
+        1260
+      ],
+      "size": [
+        170,
+        72
+      ]
+    },
+    {
+      "id": "powerjob",
+      "type": "backend",
+      "label": "PowerJob",
+      "sublabel": "月度重算分片调度",
+      "pos": [
+        880,
+        1260
+      ],
+      "size": [
+        170,
+        72
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "接入层 adaptor｜REST · MQ · 防腐层",
+      "wraps": [
+        "mq-consumer",
+        "acl",
+        "rest"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "应用层 application｜场景编排",
+      "wraps": [
+        "sc-fee",
+        "sc-freight",
+        "sc-cost",
+        "sc-recalc",
+        "sc-pricing"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "domain · fee｜费用计提",
+      "wraps": [
+        "fee-svc",
+        "fee-r1",
+        "fee-r2",
+        "fee-r3",
+        "fee-r4"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "domain · freight｜运费计费",
+      "wraps": [
+        "freight-svc",
+        "sf-us",
+        "sf-jp",
+        "sf-sea"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "domain · cost｜成本单与重算批次",
+      "wraps": [
+        "cost-sheet",
+        "cost-recalc"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "domain · pricing｜定价求解",
+      "wraps": [
+        "pricing-solver"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "domain · rule｜规则版本与双时态",
+      "wraps": [
+        "rule-temporal",
+        "rule-version"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "基础设施层 infrastructure｜实现 domain 仓储接口（依赖倒置）",
+      "wraps": [
+        "repo",
+        "mysql",
+        "redis",
+        "mqueue",
+        "powerjob"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "bill-to-mq",
+      "from": "bill-file",
+      "to": "mq-consumer",
+      "label": "账单文件导入"
+    },
+    {
+      "id": "mq-to-acl",
+      "from": "mq-consumer",
+      "to": "acl",
+      "label": "原始账单"
+    },
+    {
+      "id": "acl-to-fee",
+      "from": "acl",
+      "to": "sc-fee",
+      "label": "标准化费用行",
+      "variant": "dashed"
+    },
+    {
+      "id": "rest-to-fee",
+      "from": "rest",
+      "to": "sc-fee"
+    },
+    {
+      "id": "rest-to-freight",
+      "from": "rest",
+      "to": "sc-freight"
+    },
+    {
+      "id": "rest-to-cost",
+      "from": "rest",
+      "to": "sc-cost"
+    },
+    {
+      "id": "rest-to-recalc",
+      "from": "rest",
+      "to": "sc-recalc"
+    },
+    {
+      "id": "rest-to-pricing",
+      "from": "rest",
+      "to": "sc-pricing"
+    },
+    {
+      "id": "sc-fee-to-domain",
+      "from": "sc-fee",
+      "to": "fee-svc",
+      "label": "计提"
+    },
+    {
+      "id": "sc-freight-to-domain",
+      "from": "sc-freight",
+      "to": "freight-svc",
+      "label": "试算"
+    },
+    {
+      "id": "sc-cost-to-domain",
+      "from": "sc-cost",
+      "to": "cost-sheet",
+      "label": "生成"
+    },
+    {
+      "id": "sc-recalc-to-domain",
+      "from": "sc-recalc",
+      "to": "cost-recalc",
+      "label": "发起批次"
+    },
+    {
+      "id": "sc-pricing-to-domain",
+      "from": "sc-pricing",
+      "to": "pricing-solver",
+      "label": "求解"
+    },
+    {
+      "id": "fee-svc-rule1",
+      "from": "fee-svc",
+      "to": "fee-r1"
+    },
+    {
+      "id": "fee-svc-rule2",
+      "from": "fee-svc",
+      "to": "fee-r2"
+    },
+    {
+      "id": "fee-svc-rule3",
+      "from": "fee-svc",
+      "to": "fee-r3"
+    },
+    {
+      "id": "fee-svc-rule4",
+      "from": "fee-svc",
+      "to": "fee-r4"
+    },
+    {
+      "id": "freight-svc-us",
+      "from": "freight-svc",
+      "to": "sf-us"
+    },
+    {
+      "id": "freight-svc-jp",
+      "from": "freight-svc",
+      "to": "sf-jp"
+    },
+    {
+      "id": "freight-svc-sea",
+      "from": "freight-svc",
+      "to": "sf-sea"
+    },
+    {
+      "id": "freight-rate-asof",
+      "from": "freight-svc",
+      "to": "rule-temporal",
+      "label": "费率卡 as-of"
+    },
+    {
+      "id": "fee-rule-asof",
+      "from": "fee-svc",
+      "to": "rule-temporal",
+      "label": "费用规则 as-of"
+    },
+    {
+      "id": "recalc-drives-sheet",
+      "from": "cost-recalc",
+      "to": "cost-sheet",
+      "label": "触发"
+    },
+    {
+      "id": "rule-resolve",
+      "from": "rule-version",
+      "to": "rule-temporal",
+      "label": "解析"
+    },
+    {
+      "id": "rate-to-rule",
+      "from": "rate-source",
+      "to": "rule-version",
+      "label": "费率表导入"
+    },
+    {
+      "id": "repo-to-rule",
+      "from": "repo",
+      "to": "rule-version",
+      "label": "实现仓储接口"
+    },
+    {
+      "id": "repo-to-cost",
+      "from": "repo",
+      "to": "cost-recalc",
+      "label": "实现仓储接口"
+    },
+    {
+      "id": "repo-to-mysql",
+      "from": "repo",
+      "to": "mysql",
+      "label": "SQL"
+    },
+    {
+      "id": "redis-to-rule",
+      "from": "redis",
+      "to": "rule-temporal",
+      "label": "规则快照缓存"
+    },
+    {
+      "id": "redis-to-recalc",
+      "from": "redis",
+      "to": "cost-recalc",
+      "label": "重算幂等锁"
+    },
+    {
+      "id": "rule-to-mq",
+      "from": "rule-version",
+      "to": "mqueue",
+      "label": "规则变更事件",
+      "variant": "dashed"
+    },
+    {
+      "id": "powerjob-to-recalc",
+      "from": "powerjob",
+      "to": "cost-recalc",
+      "label": "月度分片调度"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "REST 端点（9 个）",
+      "items": [
+        "运费试算 · 费用计提 · 成本单生成 · 成本单查询",
+        "重算批次 · 批次查询",
+        "规则 as-of 查询 · 规则版本追加",
+        "定价求解"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "账单导入链路（异步）",
+      "items": [
+        "平台账单文件 → MQ 消费者（RabbitMQ 账单导入队列）",
+        "防腐层按 Amazon / Shopee / Temu 文件格式适配为标准费用行",
+        "标准化费用行驱动费用计提场景"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "分层边界",
+      "items": [
+        "domain 零技术依赖：不依赖 Spring / MyBatis，可单独编译",
+        "infrastructure 实现 domain repository 接口（依赖倒置）",
+        "adaptor / application 只依赖 domain 的接口与值对象"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "规则与重算",
+      "items": [
+        "规则版本按 as-of 双时态解析（BitTemporalResolver）",
+        "重算批次按订单分片，Redis 幂等锁防重复计费",
+        "PowerJob 月度触发全量重算"
+      ]
+    }
+  ]
+}

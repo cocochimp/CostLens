@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "/Users/lovin/Desktop/AgentTest/xxx01/.archify/workflow-bitemporal-20261120-171552/candidate.json",
+    "sha256": "cd54938d8d2a53627114a08228a709771ce1800134b2dae2ec8fe577071bf48c",
+    "bytes": 5963
+  },
+  "artifact": {
+    "path": "/Users/lovin/Desktop/AgentTest/xxx01/diagrams/03-双时态版本.html",
+    "sha256": "e09729614d471c3927a322f8f9b23a099abd76cb8a17535362cb774c9b112489",
+    "bytes": 853778
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/Users/lovin/Desktop/AgentTest/xxx01/diagrams/03-双时态版本.finalize.json",
+    "summaryReceipt": "/Users/lovin/Desktop/AgentTest/xxx01/diagrams/03-双时态版本.finalize-summary.json",
+    "browserCheckReceipt": "/Users/lovin/Desktop/AgentTest/xxx01/diagrams/03-双时态版本.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-11-20T09:10:28.692Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 2648,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

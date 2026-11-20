@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.costlens</groupId>
+        <artifactId>costlens</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>costlens-application</artifactId>
+    <name>costlens-application</name>
+    <description>应用层：场景编排与 Assembler</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.costlens</groupId>
+            <artifactId>costlens-domain</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.costlens</groupId>
+            <artifactId>costlens-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+    </dependencies>
+</project>

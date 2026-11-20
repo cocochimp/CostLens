@@ -1,0 +1,65 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "双时态（bitemporal）规则版本：两条时间轴上的 as-of 查询",
+    "locale": "zh-CN",
+    "output": "diagrams/03-双时态版本.html",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    { "id": "valid", "label": "Valid Time 轴" },
+    { "id": "txn", "label": "Transaction Time 轴" },
+    { "id": "table", "label": "版本表" },
+    { "id": "asof", "label": "as-of 查询判定" }
+  ],
+  "phases": [
+    { "id": "p_axes", "label": "① 两条时间轴", "fromCol": 0, "toCol": 1, "variant": "emphasis" },
+    { "id": "p_record", "label": "② 版本表与认知时点", "fromCol": 2, "toCol": 3 },
+    { "id": "p_answer", "label": "③ 命中版本与用途", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "groups": [
+    { "id": "g_valid", "label": "业务生效时间：什么时候适用", "lane": "valid", "fromCol": 0, "toCol": 1, "variant": "emphasis" },
+    { "id": "g_txn", "label": "系统认知时间 recorded_at：什么时候知道", "lane": "txn", "fromCol": 0, "toCol": 1, "variant": "dashed" }
+  ],
+  "mainPath": ["q_in", "k_b", "f_b", "r_b"],
+  "nodes": [
+    { "id": "vt_v1", "lane": "valid", "col": 0, "type": "backend", "icon": "calendar", "label": "v1 生效 2023-01-01", "sublabel": "失效 2023-06-30" },
+    { "id": "vt_v2", "lane": "valid", "col": 1, "type": "backend", "icon": "calendar", "label": "v2 生效 2023-01-01", "sublabel": "valid_from 不变" },
+    { "id": "tt_v1", "lane": "txn", "col": 0, "type": "backend", "icon": "clock", "label": "2023-03-01 录入 v1", "sublabel": "费率 15%（应为 16%）" },
+    { "id": "tt_v2", "lane": "txn", "col": 1, "type": "backend", "icon": "clock", "label": "2023-03-10 录入 v2", "sublabel": "费率更正为 16%" },
+    { "id": "tbl", "lane": "table", "col": 2, "type": "database", "label": "双时态版本表", "sublabel": "只追加，不修改" },
+    { "id": "q_in", "lane": "asof", "col": 2, "yOffset": 0, "type": "external", "icon": "decision", "label": "as-of 查询", "sublabel": "bizTime 2023-02-15" },
+    { "id": "k_a", "lane": "asof", "col": 3, "yOffset": -110, "type": "external", "icon": "clock", "label": "knownAt 2023-03-05", "sublabel": "查询 A：v2 还没录入" },
+    { "id": "k_b", "lane": "asof", "col": 3, "yOffset": 0, "type": "external", "icon": "clock", "label": "knownAt 2023-03-15", "sublabel": "查询 B：v2 已可看到" },
+    { "id": "k_c", "lane": "asof", "col": 3, "yOffset": 110, "type": "external", "icon": "clock", "label": "knownAt 当前", "sublabel": "查询 C：取最新认知" },
+    { "id": "f_a", "lane": "asof", "col": 4, "yOffset": -110, "type": "backend", "icon": "decision", "label": "取 03-05 可见版本", "sublabel": "valid 覆盖 + 取最新" },
+    { "id": "f_b", "lane": "asof", "col": 4, "yOffset": 0, "type": "backend", "icon": "decision", "label": "取 03-15 可见版本", "sublabel": "valid 覆盖 + 取最新" },
+    { "id": "f_c", "lane": "asof", "col": 4, "yOffset": 110, "type": "backend", "icon": "decision", "label": "取最新认知版本", "sublabel": "valid 覆盖 + 取最新" },
+    { "id": "r_a", "lane": "asof", "col": 5, "yOffset": -110, "type": "backend", "icon": "flag", "label": "命中 v1 · 15%", "sublabel": "查询 A：复现当时决策" },
+    { "id": "r_b", "lane": "asof", "col": 5, "yOffset": 0, "type": "backend", "icon": "flag", "label": "命中 v2 · 16%", "sublabel": "查询 B：今天核算 1 月账" },
+    { "id": "r_c", "lane": "asof", "col": 5, "yOffset": 110, "type": "backend", "icon": "flag", "label": "命中 v2 · 16%", "sublabel": "查询 C：日常核算口径" }
+  ],
+  "edges": [
+    { "from": "vt_v1", "to": "vt_v2", "label": "业务区间不变", "variant": "emphasis", "role": "main" },
+    { "from": "tt_v1", "to": "tt_v2", "label": "追加更正", "variant": "emphasis", "role": "main" },
+    { "from": "vt_v2", "to": "tt_v2", "label": "同一行两轴坐标", "fromSide": "bottom", "toSide": "top", "role": "branch" },
+    { "from": "tt_v2", "to": "tbl", "label": "追加一行", "fromSide": "bottom", "toSide": "top", "role": "main" },
+    { "from": "tbl", "to": "q_in", "fromSide": "bottom", "toSide": "top", "role": "main" },
+    { "from": "q_in", "to": "k_a", "fromSide": "right", "toSide": "left", "role": "branch" },
+    { "from": "q_in", "to": "k_b", "role": "main" },
+    { "from": "q_in", "to": "k_c", "role": "branch" },
+    { "from": "k_a", "to": "f_a", "role": "main" },
+    { "from": "k_b", "to": "f_b", "role": "main" },
+    { "from": "k_c", "to": "f_c", "role": "main" },
+    { "from": "f_a", "to": "r_a", "role": "main" },
+    { "from": "f_b", "to": "r_b", "role": "main" },
+    { "from": "f_c", "to": "r_c", "role": "main" }
+  ],
+  "cards": [
+    { "dot": "slate", "title": "业务场景", "items": ["Amazon 美国站电子产品佣金规则", "2023-03-01 录入 v1，费率误填 15%（实际应为 16%）", "2023-03-10 录入 v2 更正为 16%：recorded_at 变了，valid_from 仍是 2023-01-01"] },
+    { "dot": "cyan", "title": "判定规则：两条轴同时用", "items": ["命中条件 = valid time 覆盖 bizTime，且 recorded_at ≤ knownAt", "多个候选取 recorded_at 最新的那一行", "只用 valid time：会计入当时还没录入的 v2，答错", "只用 recorded_at：会丢掉业务时间，无法定位到 2 月"] },
+    { "dot": "emerald", "title": "为什么要两条时间轴", "items": ["Valid Time 回答「什么时候适用」，Transaction Time 回答「系统什么时候知道」", "两轴正交：更正只动认知时间，业务时间保持不变", "所以同一条规则、同一个业务时点，在不同认知下答案不同"] },
+    { "dot": "amber", "title": "更正靠追加版本", "items": ["v2 是新增的一行，v1 永不修改", "旧行留着，历史决策依据才可复现：查询 A 仍答 15%", "今天核算走最新认知：查询 B、C 答 16%，与 A 的差额可追溯"] }
+  ]
+}
