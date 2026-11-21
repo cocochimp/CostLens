@@ -3,22 +3,31 @@
 > 同一笔成本，在不同平台、不同计算范式、不同时点算出的结果互不相同——所以记账必然混乱。
 > CostLens 只做一件事：把它算准。
 
+![CostLens 系统架构总览：业务链路 → 限界上下文 → DDD 分层 → 技术底座](docs/assets/costlens-architecture.png)
+
+<p align="center"><sub>业务链路 → 限界上下文 → DDD 分层 → 技术底座；可交互版本：<code>docs/architecture.html</code>（本地浏览器打开）</sub></p>
+
 业务背景与设计依据见 [`docs/01-业务方案.md`](docs/01-业务方案.md)，技术设计见 [`docs/02-系统设计说明书.md`](docs/02-系统设计说明书.md)，面试话术见 [`docs/03-亮点与简历手册.md`](docs/03-亮点与简历手册.md)。
 
 ---
 
-## 一、四个亮点对应的代码位置
+## 1. 解决什么问题
 
-| 亮点 | 核心实现 |
-|---|---|
-| 多市场计费范式抽象 | [`DimWeightZoneStrategy`](app/domain/src/main/java/com/costlens/domain/freight/service/strategy/DimWeightZoneStrategy.java)（连续线性）<br/>[`GirthSizeBandStrategy`](app/domain/src/main/java/com/costlens/domain/freight/service/strategy/GirthSizeBandStrategy.java)（阶跃查表）<br/>[`FirstAddWeightStrategy`](app/domain/src/main/java/com/costlens/domain/freight/service/strategy/FirstAddWeightStrategy.java)（分段取整） |
-| 平台费用异构核算 | [`PercentageRule`](app/domain/src/main/java/com/costlens/domain/fee/service/rule/PercentageRule.java) / [`PercentageWithFloorRule`](app/domain/src/main/java/com/costlens/domain/fee/service/rule/PercentageWithFloorRule.java) / [`TieredByAmountRule`](app/domain/src/main/java/com/costlens/domain/fee/service/rule/TieredByAmountRule.java) / [`PerUnitByMeasureRule`](app/domain/src/main/java/com/costlens/domain/fee/service/rule/PerUnitByMeasureRule.java) |
-| 双时态历史重算 | [`FeeRule`](app/domain/src/main/java/com/costlens/domain/rule/model/FeeRule.java) / [`BitTemporalResolver`](app/domain/src/main/java/com/costlens/domain/rule/service/BitTemporalResolver.java) |
-| 定价反推与核价约束 | [`PricingSolver`](app/domain/src/main/java/com/costlens/domain/pricing/service/PricingSolver.java) / [`LinearForm`](app/domain/src/main/java/com/costlens/domain/pricing/service/LinearForm.java) |
+跨境卖家的一笔订单成本，要同时经过多套互不相同规则：美国按计费重与邮编分区收运费，日本按三边和尺寸档收费，东南亚按首重续重计价；平台佣金还可能带最低收费和金额阶梯。费率调整、录错修正之后，如果直接覆盖旧规则，历史订单的成本与毛利又无法复现。
+
+本工程只解决这条链上的问题：**把一票货的运费、平台费用和真实净利算准，并保留每一步的计算依据。**
+
+| 痛点 | 代码里的解法 | 看哪里 |
+|---|---|---|
+| 三个市场计价因子与重量角色不同，统一模型会算错 | 三套独立计费策略 + 市场路由 + 整数化计价 | [`DimWeightZoneStrategy`](app/domain/src/main/java/com/costlens/domain/freight/service/strategy/DimWeightZoneStrategy.java) / [`GirthSizeBandStrategy`](app/domain/src/main/java/com/costlens/domain/freight/service/strategy/GirthSizeBandStrategy.java) / [`FirstAddWeightStrategy`](app/domain/src/main/java/com/costlens/domain/freight/service/strategy/FirstAddWeightStrategy.java) |
+| 最低收费与金额阶梯让低价商品实际费率失真 | 四类费用算法 + 互斥规则 + 逐项明细汇总 | [`PercentageWithFloorRule`](app/domain/src/main/java/com/costlens/domain/fee/service/rule/PercentageWithFloorRule.java) / [`TieredByAmountRule`](app/domain/src/main/java/com/costlens/domain/fee/service/rule/TieredByAmountRule.java) |
+| 费率变更或直接 UPDATE 后，历史账无法复现 | valid time + transaction time 双时态，只追加版本 + as-of 查询 | [`FeeRule`](app/domain/src/main/java/com/costlens/domain/rule/model/FeeRule.java) / [`BitTemporalResolver`](app/domain/src/main/java/com/costlens/domain/rule/service/BitTemporalResolver.java) |
+| 佣金随售价分段变化，目标售价不能简单除算 | 价格轴分段枚举 + 段内线性化 + 回代校验 + 核价缺口 | [`PricingSolver`](app/domain/src/main/java/com/costlens/domain/pricing/service/PricingSolver.java) / [`LinearForm`](app/domain/src/main/java/com/costlens/domain/pricing/service/LinearForm.java) |
+| 分片重算重复上报导致批次计数失真 | Redis Lua `SET NX PX` 原子幂等 + RabbitMQ 确认事件 | [`RedisIdempotencyGuard`](app/infrastructure/src/main/java/com/costlens/infrastructure/cost/redis/RedisIdempotencyGuard.java) / [`RabbitCostSheetNotifier`](app/infrastructure/src/main/java/com/costlens/infrastructure/cost/mq/RabbitCostSheetNotifier.java) |
 
 ---
 
-## 二、工程结构
+## 2. 工程结构
 
 严格按 DDD 六层 + easy-DDD 规范落地：
 
@@ -53,7 +62,7 @@
 
 ---
 
-## 三、快速开始
+## 3. 快速开始
 
 ### 1. 启动依赖
 
@@ -136,7 +145,7 @@ curl -s 'localhost:8080/api/rule/SHOPEE_MY_ALL_COMMISSION/as-of?bizTime=2023-08-
 
 ---
 
-## 四、测试
+## 4. 测试
 
 | 层次 | 用例数 | 覆盖 |
 |---|---|---|
@@ -155,7 +164,7 @@ curl -s 'localhost:8080/api/rule/SHOPEE_MY_ALL_COMMISSION/as-of?bizTime=2023-08-
 
 ---
 
-## 五、实现范围与偏差记录
+## 5. 实现范围与偏差记录
 
 已完成（可运行、有测试）：
 

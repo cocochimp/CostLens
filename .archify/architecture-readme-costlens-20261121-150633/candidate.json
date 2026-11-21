@@ -1,0 +1,394 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "CostLens 系统架构总览",
+    "locale": "zh-CN",
+    "output": "docs/architecture.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "git@github.com:cocochimp/CostLens.git",
+      "provider": "github",
+      "link_mode": "local-only",
+      "revision": "b5f88652d32ed8163cedaf28771988e1d98906e3"
+    }
+  },
+  "components": [
+    {
+      "id": "caller",
+      "type": "external",
+      "label": "外部调用方",
+      "sublabel": "业务系统 / 管理端",
+      "icon": "person",
+      "pos": [40, 284],
+      "size": [140, 88],
+      "sources": [
+        {
+          "path": "app/adaptor/src/main/java/com/costlens/adaptor/input/CostController.java",
+          "line": 15,
+          "end_line": 51,
+          "label": "REST 请求入口"
+        }
+      ]
+    },
+    {
+      "id": "adaptor",
+      "type": "frontend",
+      "label": "adaptor｜REST 适配器",
+      "sublabel": "接收请求 · 调用应用场景",
+      "pos": [290, 284],
+      "size": [170, 88],
+      "sources": [
+        {
+          "path": "app/adaptor/src/main/java/com/costlens/adaptor/input/CostController.java",
+          "line": 15,
+          "end_line": 51,
+          "label": "成本与重算接口"
+        },
+        {
+          "path": "app/adaptor/src/main/java/com/costlens/adaptor/input/RuleController.java",
+          "line": 17,
+          "end_line": 42,
+          "label": "规则接口"
+        },
+        {
+          "path": "app/adaptor/src/main/java/com/costlens/adaptor/input/PricingController.java",
+          "line": 11,
+          "end_line": 23,
+          "label": "定价接口"
+        }
+      ]
+    },
+    {
+      "id": "application",
+      "type": "backend",
+      "label": "application｜场景编排",
+      "sublabel": "Assembler · 仓储与通知端口",
+      "pos": [570, 284],
+      "size": [200, 88],
+      "sources": [
+        {
+          "path": "app/application/src/main/java/com/costlens/application/cost/scenario/CostSheetScenario.java",
+          "line": 18,
+          "end_line": 55,
+          "label": "成本单场景编排"
+        },
+        {
+          "path": "app/application/src/main/java/com/costlens/application/cost/scenario/RecalcScenario.java",
+          "line": 14,
+          "end_line": 60,
+          "label": "重算与幂等编排"
+        },
+        {
+          "path": "app/application/src/main/java/com/costlens/application/pricing/scenario/PricingScenario.java",
+          "line": 21,
+          "end_line": 58,
+          "label": "定价场景编排"
+        }
+      ]
+    },
+    {
+      "id": "rule",
+      "type": "backend",
+      "label": "rule｜双时态规则",
+      "sublabel": "业务时点 × 认知时点 · 版本只追加",
+      "tag": "限界上下文",
+      "pos": [900, 24],
+      "size": [230, 88],
+      "sources": [
+        {
+          "path": "app/domain/src/main/java/com/costlens/domain/rule/model/FeeRule.java",
+          "line": 62,
+          "end_line": 118,
+          "label": "双时态解析与版本追加"
+        },
+        {
+          "path": "app/application/src/main/java/com/costlens/application/rule/scenario/RuleScenario.java",
+          "line": 30,
+          "end_line": 61,
+          "label": "规则查询与追加场景"
+        },
+        {
+          "path": "app/domain/pom.xml",
+          "line": 14,
+          "end_line": 27,
+          "label": "领域层零框架依赖"
+        }
+      ]
+    },
+    {
+      "id": "freight",
+      "type": "backend",
+      "label": "freight｜三市场运费",
+      "sublabel": "美国 · 日本 · 东南亚策略路由",
+      "tag": "限界上下文",
+      "pos": [900, 154],
+      "size": [230, 88],
+      "sources": [
+        {
+          "path": "app/domain/src/main/java/com/costlens/domain/freight/service/FreightRatingService.java",
+          "line": 14,
+          "end_line": 38,
+          "label": "按市场路由运费策略"
+        },
+        {
+          "path": "app/application/src/main/java/com/costlens/application/freight/scenario/FreightQuoteScenario.java",
+          "line": 33,
+          "end_line": 53,
+          "label": "三市场费率卡与试算"
+        }
+      ]
+    },
+    {
+      "id": "cost",
+      "type": "backend",
+      "label": "cost｜成本单与重算批次",
+      "sublabel": "成本项汇总 · 确认状态 · 分片收敛",
+      "tag": "限界上下文 / 主链路结果",
+      "pos": [900, 284],
+      "size": [230, 88],
+      "sources": [
+        {
+          "path": "app/application/src/main/java/com/costlens/application/cost/scenario/CostSheetScenario.java",
+          "line": 43,
+          "end_line": 55,
+          "label": "成本单生成确认与通知"
+        },
+        {
+          "path": "app/domain/src/main/java/com/costlens/domain/cost/model/OrderCostSheet.java",
+          "line": 16,
+          "end_line": 103,
+          "label": "成本单状态与结果计算"
+        },
+        {
+          "path": "app/domain/src/main/java/com/costlens/domain/cost/model/RecalcBatch.java",
+          "line": 8,
+          "end_line": 96,
+          "label": "重算批次状态收敛"
+        }
+      ]
+    },
+    {
+      "id": "fee",
+      "type": "backend",
+      "label": "fee｜四类费用算法",
+      "sublabel": "比例 · 比例保底 · 阶梯 · 按量",
+      "tag": "限界上下文",
+      "pos": [900, 414],
+      "size": [230, 88],
+      "sources": [
+        {
+          "path": "app/domain/src/main/java/com/costlens/domain/fee/service/rule/ChargeRuleFactory.java",
+          "line": 13,
+          "end_line": 20,
+          "label": "四类费用算法"
+        },
+        {
+          "path": "app/domain/src/main/java/com/costlens/domain/fee/service/FeeChargeService.java",
+          "line": 16,
+          "end_line": 43,
+          "label": "互斥筛选与逐项汇总"
+        }
+      ]
+    },
+    {
+      "id": "pricing",
+      "type": "backend",
+      "label": "pricing｜定价反推",
+      "sublabel": "分段方程 · 线性化求解 · 回代校验",
+      "tag": "限界上下文",
+      "pos": [900, 544],
+      "size": [230, 88],
+      "sources": [
+        {
+          "path": "app/domain/src/main/java/com/costlens/domain/pricing/service/PricingSolver.java",
+          "line": 22,
+          "end_line": 67,
+          "label": "分段定价求解"
+        },
+        {
+          "path": "app/application/src/main/java/com/costlens/application/pricing/scenario/PricingScenario.java",
+          "line": 36,
+          "end_line": 58,
+          "label": "定价反推场景"
+        }
+      ]
+    },
+    {
+      "id": "mysql",
+      "type": "database",
+      "label": "MySQL｜仓储实现",
+      "sublabel": "MyBatis-Plus · 规则 / 成本单 / 批次",
+      "pos": [40, 690],
+      "size": [220, 90],
+      "sources": [
+        {
+          "path": "app/infrastructure/src/main/java/com/costlens/infrastructure/PersistenceConfig.java",
+          "line": 6,
+          "end_line": 12,
+          "label": "基础设施持久化装配"
+        },
+        {
+          "path": "app/infrastructure/src/main/java/com/costlens/infrastructure/rule/repository/FeeRuleRepositoryImpl.java",
+          "line": 21,
+          "end_line": 76,
+          "label": "规则版本 MySQL 仓储"
+        },
+        {
+          "path": "app/infrastructure/src/main/java/com/costlens/infrastructure/cost/repository/CostSheetRepositoryImpl.java",
+          "line": 26,
+          "end_line": 103,
+          "label": "成本单与明细仓储"
+        }
+      ]
+    },
+    {
+      "id": "redis",
+      "type": "database",
+      "label": "Redis｜Lua 幂等闸门",
+      "sublabel": "SET NX PX · 重算分片 6 小时 TTL",
+      "pos": [300, 690],
+      "size": [220, 90],
+      "sources": [
+        {
+          "path": "app/infrastructure/src/main/java/com/costlens/infrastructure/cost/redis/RedisIdempotencyGuard.java",
+          "line": 11,
+          "end_line": 44,
+          "label": "Redis Lua 原子占位"
+        },
+        {
+          "path": "app/application/src/main/java/com/costlens/application/cost/scenario/RecalcScenario.java",
+          "line": 21,
+          "end_line": 49,
+          "label": "分片幂等键与 TTL"
+        }
+      ]
+    },
+    {
+      "id": "rabbitmq",
+      "type": "messagebus",
+      "label": "RabbitMQ｜确认事件",
+      "sublabel": "发布成本单确认消息",
+      "pos": [560, 690],
+      "size": [220, 90],
+      "sources": [
+        {
+          "path": "app/infrastructure/src/main/java/com/costlens/infrastructure/cost/mq/RabbitCostSheetNotifier.java",
+          "line": 10,
+          "end_line": 30,
+          "label": "成本单确认事件发布"
+        },
+        {
+          "path": "app/application/src/main/java/com/costlens/application/cost/scenario/CostSheetScenario.java",
+          "line": 51,
+          "end_line": 54,
+          "label": "确认后调用通知端口"
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "adaptor｜入站适配层",
+      "wraps": ["adaptor"],
+      "pad": 18
+    },
+    {
+      "kind": "region",
+      "label": "application｜应用场景层",
+      "wraps": ["application"],
+      "pad": 18
+    },
+    {
+      "kind": "region",
+      "label": "domain｜五个限界上下文（零框架依赖）",
+      "wraps": ["rule", "freight", "cost", "fee", "pricing"],
+      "pad": 20
+    },
+    {
+      "kind": "region",
+      "label": "infrastructure｜技术底座与端口实现",
+      "wraps": ["mysql", "redis", "rabbitmq"],
+      "pad": 22
+    }
+  ],
+  "connections": [
+    {
+      "id": "rest-request",
+      "from": "caller",
+      "to": "adaptor",
+      "label": "REST / JSON",
+      "variant": "emphasis"
+    },
+    {
+      "id": "invoke-scenario",
+      "from": "adaptor",
+      "to": "application",
+      "label": "调用应用场景",
+      "variant": "emphasis"
+    },
+    {
+      "id": "orchestrate-rule",
+      "from": "application",
+      "to": "rule",
+      "label": "as-of / 版本追加"
+    },
+    {
+      "id": "orchestrate-freight",
+      "from": "application",
+      "to": "freight",
+      "label": "运费试算"
+    },
+    {
+      "id": "orchestrate-cost",
+      "from": "application",
+      "to": "cost",
+      "label": "成本单 / 重算",
+      "variant": "emphasis"
+    },
+    {
+      "id": "orchestrate-fee",
+      "from": "application",
+      "to": "fee",
+      "label": "费用计提"
+    },
+    {
+      "id": "orchestrate-pricing",
+      "from": "application",
+      "to": "pricing",
+      "label": "定价反推"
+    },
+    {
+      "id": "repository-port",
+      "from": "application",
+      "to": "mysql",
+      "label": "仓储端口（依赖倒置）"
+    },
+    {
+      "id": "idempotency-port",
+      "from": "application",
+      "to": "redis",
+      "label": "分片幂等端口"
+    },
+    {
+      "id": "confirmation-event",
+      "from": "application",
+      "to": "rabbitmq",
+      "label": "成本单确认事件",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "主链路",
+      "items": ["REST 请求 → 应用场景编排 → 领域计算 / 状态 → 成本单或计算结果"]
+    },
+    {
+      "dot": "violet",
+      "title": "依赖约束",
+      "items": ["adaptor → application → domain", "infrastructure 实现端口；domain 不依赖技术框架"]
+    }
+  ]
+}
